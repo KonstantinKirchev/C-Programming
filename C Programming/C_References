@@ -1,0 +1,888 @@
+#+TITLE: C
+
+* Comments
+
+  Block: /* Commented text. */
+  Inline: // Commented text.
+
+  Inline comments were added in later revisions, so block comments are
+  usually used.
+
+* Number literals
+
+  + Decimal: 255
+  + Hex: 0xff
+  + Binary: 0b11111111
+  + Octal: 0377
+  + Float: 255.0f, 2.55e+2f
+  + Double: 255.0, 2.55e+2
+  + Long double: 255.0l, 2.55e+2l
+
+* Basic data types
+
+  The keyword "void" represents the absence of data or data type.
+
+  + char   - 1-byte integer.
+  + int    - N-byte integer.  The number vary between systems.
+  + float  - Single-precision floating-point number.
+  + double - Double-precision floating-point number.
+  + _Bool    - Usually not used directly, but with stdbool.h.
+  + _Complex - Usually not used directly, but with complex.h.
+
+** Type modifiers
+
+  Length:
+
+    An integer can be specified to be short, long or long long.
+    Compared to a normal int, a short int is typically smaller in
+    size, while long int and long long int are typically bigger.  A
+    short, long or a long long int can also written without the "int"
+    part.
+
+    Example: short int n = 562;
+    Example: short n = 562;
+    Example: long int n = 130556;
+    Example: long n = 130556;
+    Example: long long int n = 130556;
+    Example: long long n = 130556;
+
+    The size of a shorts, longs and long longs vary between systems.
+    On a given system, a short may be half the size of an int and a
+    long may be twice the size.  A long long may be twice the size of
+    a long.
+
+    There're also long doubles.  Their size also vary between systems.
+    A long double may be twice the size of a normal double.
+
+    Example: long double = 2.451;
+
+  Signing:
+
+    Int and char numbers are either signed or unsigned.  Signed
+    numbers can be positive or negative, while unsigned are only
+    positive.  By default int and char numbers are signed and labeling
+    them "signed" is optional.
+
+    Signed: signed int n = -1276;
+    Signed: signed char n = -105;
+    Signed: int n = -1276;
+    Signed: char n = -105;
+    Unsigned: unsigned int n = 3125;
+    Unsigned: unsigned char n = 213;
+
+    A number can be labeled signed or unsigned without a data type.
+    This implicitly specifies a signed or unsigned int.
+
+    Example: signed n = -1276;
+    Example: unsigned n = 3125;
+
+* Casting
+
+  Casting is the conversion for one data to another.
+
+  Example: int n = (int) 'a'
+  Example: int *p = (int *) &c
+
+* Operators
+** Logical
+
+  : &&  // and
+  : ||  // or
+  : ^   // xor
+  : !   // not (unary operator)
+
+  : b ? x : y  // conditional operation
+
+** Bitwise
+
+  &
+
+    Bitwise AND.  If both bytes are 1, the resulting byte is 1.
+
+    Example: (0b1001 & 0b1100) == 0b1000;
+
+  |
+
+    Bitwise inclusive OR.  If either of the bytes is 1, the resulting
+    byte is 1.
+
+    Example: (0b1001 | 0b1100) == 0b1101;
+
+  ^
+
+    Bitwise exclusive OR (XOR).  If only one of the bytes is 1, the
+    resulting byte is 1.
+
+    Example: (0b1001 ^ 0b1100) == 0b0101;
+
+  <<
+
+    Left shift.  Moves all bits to the left by a given amount.
+
+    Example: (0b00001001 << 2) == 0b00100100;
+
+  >>
+
+    Right shift. Moves all bits to the right by a given amount.
+
+    Example: (0b00001001 >> 2) == 0b00000010;
+
+  ~
+
+    One's compliment.  A unary oprator.  Flips all bits.
+
+    Example: ~0b1001 == 0b0110;
+
+** Comparison
+
+  == != < > <= >=
+
+** sizeof
+
+  The "sizeof" operator returns an integer corresponding to the size a
+  data type or any expresson, such as a variable.
+
+  Example: sizeof i
+  Example: sizeof (int)
+  Example: sizeof (int *)
+
+  Parentheses are mandatory when giving a data type instead of an
+  expression.
+
+  With an array, the sizeof operator will give the size of the all
+  array elements combined.  This can be used to compute the number of
+  items in an array.
+
+  Example: sizeof (array)
+  Example: sizeof (array) / sizeof (array[0])
+
+  The example above will not work if the array is a function
+  parameter.
+
+* Variables
+
+  Declaring: int number;
+  Initializing: int number = 5;
+  Assigning: number = 7;
+  Accessing: number
+
+  Static variables:
+
+    A static variable is kept in a statically allocated memory, not on
+    the stack.  Inside a function its value is kept between calls.
+
+    Example: int walk(void) { static int n = 0; ++n; return n; }
+
+    In the example, the value of n increase by 1 for every function
+    call.  First walk() will return 1, then 2, then 3 and so on.
+
+  Global variables:
+
+    A global variable can be accesed by all functions.  It's declared
+    outside of any function.
+
+    Example: int n;
+
+    It's kept in statically allocated memory, not on the stack.
+
+  Global static variables:
+
+    Like a normal global variable, but can be accesed only in its
+    compilation unit.  It's declared outside of any function.
+
+    Example: static int n;
+
+    This allows a global variable of the same name to be used in
+    different compilation units.  It's kept in statically allocated
+    memory, not on the stack.
+
+  External variables:
+
+    External variable declaration declares a variable which is to be
+    defined and initialized somewhere else, outside of a any function,
+    typically in another compilation unit.
+
+    Example: extern int n;
+
+    An extern variable declaration must have a corresponding
+    definition.  This is done by defining a global variable or a
+    global static variable.
+
+    Example: int n;
+
+    Extern variables are useful for declaring a variable which is to
+    be defined in another compilation unit.  There will be an error
+    when the variable isn't defined.
+
+  Volatile variables:
+
+    A volatile variable tells the compiler that the variable must be
+    explicitly accessed every time.  Otherwise a compiler optimization
+    might skip a variable access, because it assumes there won't be
+    any change to its value.
+
+    Example: volatile int n;
+
+    This is useful only in few special cases, such as when a callback
+    function changes the value of the variable.
+
+  Automatic variables:
+
+    These are the most common variables within a function.  They can
+    be declared with or without keyword "auto".
+
+    Example: int n;
+    Example: auto int n;
+
+    The keyword "auto" is almost never used.
+
+  Register variables:
+
+    A varible marked "register" suggests to the compiler that it
+    should store it's values in a register, for faster access.
+
+    Example: register int n;
+
+    The address of a register variable can't be obtained.
+
+    Register variables are rarely used, since compilers usually make
+    good choices on which variables should be stored in register.
+
+* TODO Constants
+* Functions
+
+  Declaring: int move(int x, int y);
+  Defining: int move(int x, int y) { statements }
+  Calling: move(5, 7)
+
+  In a declaration there's no need for the parameter names to
+  correspond with the definition and can even omitted.
+
+  A declaration is the same as declaring the function "extern".
+
+  Parameters:
+
+    The keyword "void" must be used for a function without parameters.
+    In C++ an empty parameters list is used instead.
+
+    Example: int move(void) { statements }
+
+  Static functions:
+
+    A static function is for use only in it's compilation unit.  This
+    allows a functions with the same name to exists in several
+    compilation units.
+
+    Example: static int walk(void) { … }
+
+  Inline functions:
+
+    A function marked inline suggests to the compiler to do an inline
+    expansion of it in places where it's called.  This way the program
+    will execute the function code directly, without making a call.
+
+    An inline function must be in the same compilation unit in ordered
+    to be inlined.
+
+    An inline function must be in the same compilation unit in ordered
+    to be inlined.
+
+    Example: inline int walk(void) { … }
+
+    This may be provide small size and speed optimization for very
+    small functions or functions which are called often.
+
+* TODO Control Flow Statements
+
+  If statements:
+
+    if
+    else if
+    else
+
+  Switch statements:
+
+    switch (TESTED_VALUE)
+      {
+        case COMPARED_VALUE_1:
+          …
+          break;
+        case COMPARED_VALUE_2:
+          …
+          break;
+        default:
+          …
+          break;
+      }
+
+  Goto statements:
+
+** Loops
+
+  break
+  continue
+
+  While statements:
+  Do statements:
+  For statements:
+
+* Pointers
+
+  A pointer is a data type which stores a memory address, usually of a
+  variable.
+
+  Declaring: int *pointer;
+  Initializing: int *pointer = &number;
+  Assigning: pointer = &number;
+  Accessing: pointer
+
+  Different pointers point to different type of values.  For example,
+  some pointers can store addresses of an int variables, while others
+  store addresses of char variables.
+
+  Referencing:
+
+    The reference operator returns the address of an lvalue, such as a
+    variable or an array name.  The returned address can be assigned
+    to a pointer.
+
+    Example: &number
+
+  Dereferencing:
+
+    Dereferencing returns the value stored on the address which the
+    pointer points.  This can be also used to assign an new value to
+    the dereferenced address.
+
+    Assigning: *pointer = 7;
+    Accessing: *pointer
+
+  Offsetting:
+
+    An integer can be added or subtracted from a pointer.
+
+    Example:
+
+      int i;
+      int *p = &i + 3;
+
+    This returns an new address with a specified offset from original.
+    The integer is first multipled by the value type size to which the
+    pointer points to.  In the example above, if an integer is 4 bytes
+    long, then p will store an address 12 bytes (3 * 4 bytes) above
+    i's address.
+
+    Offseting can also be used when assigning and accessing.
+
+    Assigning: *(pointer + 2) = 7;
+    Accessing: *(pointer + 2)
+
+    An alternative syntax exists for the same operation.  It uses
+    square brakets.
+
+    Assigning: pointer[2] = 7;
+    Accessing: pointer[2]
+
+  Distance between pointers:
+
+    A pointer can be substracted from another pointer of the same
+    type.
+
+    Example: p1 - p2;
+
+    This returns an integer, representing the distance in memory
+    between the two pointers.  The distance is measured by the amount
+    of values of the pointers' data type that can fit between the two
+    pointers.
+
+  Null pointers:
+
+    A 0 is a valid pointer value.  It represents a pointer without and
+    address.
+
+  Void pointers:
+
+    A pointer can also point to any address.  A void pointer can be
+    assigned to any pointer type.  Also, any pointer type can be
+    assigned to a void pointer.  A void pointer can't be dereferenced.
+
+** Structure pointers
+
+  Example:
+
+    struct gundam
+    {
+      int width;
+      int height;
+    };
+
+    struct gundam red;
+    struct gundam *p = &red;
+
+    p->width = 1200;   // (*p).width = 1200
+    p->height = 6500;  // (*p).height = 6500
+
+* Arrays
+
+  A contiguous memory in the stack.  It's contains a fixed series of
+  values of a single type.  A value of an array is called an element.
+
+  Declaring: int list[3];
+  Initializing: int list[3] = { 5, 7, 13 };
+  Initializing: int list[3] = { 5, 7 };
+  Initializing: int list[] = { 5, 7, 13 };
+  Initializing: int list[5] = {};
+
+  The name of an array is a pointer to its first element.  Referencing
+  an array returns a pointer to an array.
+
+  An array name is a lvalue, but not a variable, so it can't be
+  reassigned.
+
+  An array can be offset like a pointer.
+
+  In a function declaration an array parameter is treated as a
+  pointer.  For example, the following are the same declaration:
+
+    void get_pilot(int *gundam) { ... }
+    void get_pilot(int gundam[]) { ... }
+    void get_pilot(int gundam[10]) { ... }
+
+  Items:
+
+    Assigning: list[2] = 7;
+    Assigning: *(list + 2) = 7;
+    Accessing: list[2]
+    Accessing: *(list + 2)
+
+* Strings
+
+  Immutable strings:
+
+    Initializing: char *string = "Some text";
+    Initializing: const char *string = "Some text";
+    Assigning: string = "Some other text";
+
+    It's better to define immutable strings as const char.
+
+    In either case, the string characters shouldn't be changed.  The
+    same text might be saved in read-only memory or used in different
+    unrelated parts of the program.
+
+    The pointer address can be changed to point to a different string.
+
+  Mutable strings:
+
+    Declaring: char string[10];
+    Initializing: char string[10] = "Some text";
+    Initializing: char string[] = "Some text";
+
+    Assignment to a variable string can be done with functions like
+    strcpy().
+
+  Strings end with the NUL characters.  For this reason, a char array
+  of size 6 is needed to fit a 5 letter string.
+
+* Enumerations
+
+  An enumeration (enum) defines a list of names, each associated with
+  a constant integer.  Enum names are in place of integers.
+
+  Defining: enum color { RED, GREEN, BLUE, BLACK, WHITE };
+
+  Example:
+
+    enum color { RED, GREEN, BLUE, BLACK, WHITE };
+    int pixel = 2;
+
+    if (pixel == BLUE)
+      {
+        puts("True");
+      }
+
+  In the above example, RED is 0, GREEN is 1 and so on.  Each name is
+  1 greater than the previous.  The if statement is true, because both
+  pixel and BLUE are 2.
+
+  Enums can also be defined anonymously.  Named enums provide more
+  useful debuging information.
+
+  Defining: enum { RED, GREEN, BLUE };
+
+  Assigning values:
+
+    Values of enum names can be defined manualy.
+
+    Defining: enum color { RED = 7, GREEN = 5, BLUE = 5 };
+    Defining: enum color { RED, GREEN = 2, BLUE, WHITE = 1, BLACK };
+
+    Names without manually set values are 1 greater than the previous.
+    In the last definition example, the values are 0, 2, 3, 1 and 2.
+
+  Enum variables:
+
+    Declaring: enum color pixel;
+    Initializing: enum color pixel = RED;
+
+    Enum variables can be initialized along with enum definitions.
+
+    Declaring: enum color { RED, BLUE, GREEN } pixel = RED, brush;
+    Declaring: enum { RED, BLUE, GREEN } pixel = RED, brush;
+
+* Unions
+
+  A union merges several data types within one memory space.  Each
+  data type in a union is called a member.
+
+  Defining: union number { int i; float f; };
+
+  Unions can also be anonymous.
+
+  Defining: union { int i; float f; };
+
+  Union variables:
+
+    Declaring: union number n;
+    Initializing: union number n = { 10 };
+    Initializing: union number n = { .f = 5.7 };
+    Initializing: union number n = {};
+
+    When initializing, unspecified members are set to 0.
+
+    Union variables can be initialized along with union definitions.
+
+    Initializing: union number { int i; float f; } a, b;
+    Initializing: union { int i; float f; } a = { 10 }, b;
+
+  Example:
+
+    union {
+      unsigned char index[2];
+      struct {
+        unsigned char left;
+        unsigned char right;
+      };
+    } actions = {};
+
+* Structures
+
+  A structure (struct) is a type consisting of other types.  Each type
+  in a struct is called a member.
+
+  Declaring: struct mobile;
+  Defining: struct mobile { char *name; int speed; };
+
+  Structures can also be anonymous.
+
+  In a struct, the data of an array is also part of the structure
+  data.  Copying the struct also copies the data of the array, not
+  just a pointer to that data.
+
+  Defining: struct { char *name; int speed; };
+
+  Struct variables:
+
+    Declaring: struct gundam red;
+    Initializing: struct mobile gundam = { "GM", 105 }
+    Initializing: struct mobile gundam = { "GM" }
+    Initializing: struct mobile gundam = { .speed = 105 }
+    Initializing: struct mobile gundam = {}
+
+    When initializing, unspecified members are set to 0.
+
+    Struct variables can be initialized along with struct definitions.
+
+    Initializing: struct mobile { char *name; int speed; } gundam, zaku;
+    Initializing: struct { char *name; int speed; } gundam, zaku;
+    Initializing: struct { char *name; int speed; } gundam = { "GM" }, zaku;
+
+    The above often is used to define even more complext structs, such
+    as the example bellow.
+
+    Defining: struct mobile { char *name; struct { int w; int h; } specs; };
+    Initializing: struct mobile gundam = { "GM", { 50, 125 } }
+    Initializing: struct mobile gundam = { .specs = { 50, 125 } }
+    Initializing: struct mobile gundam = { "GM", .specs.w = 50 }
+
+  Accessing members:
+
+    Assigning: red.name = "Someone";
+    Accessing: red.name
+
+    To access members of a struct pointer, "->" can be used.
+
+    Assigning: p->name = "Someone";
+    Accessing: p->name
+
+  Initializer lists:
+
+    Initializer lists can be used without a variable, which is useful
+    for use as arguments.
+
+    : print_mobile_info ((struct mobile) {"GM", 157});
+
+  Initializer lists:
+
+    Initializer lists can be used without a variable, which is useful
+    for use as arguments.
+
+    : print_mobile_info ((struct mobile) {"GM", 157});
+
+* Type Definitions
+
+  A type definition (typedef) gives a new name to a data type.
+
+  Defining: typedef int number;
+  Defining: typedef struct mobile_struct mobile_type;
+  Defining: typedef enum color_enum color_type;
+  Defining: typedef float vector[2];
+  Defining: typedef const char *String;
+  Defining: typedef void walk_t (int x, int y);
+
+  Example:
+
+    typedef struct mobile_struct mobile_type;
+    struct mobile_struct { char *name; int speed; };
+
+    mobile_type gundam = { "GM", 125 };
+
+  Complex typedefs are possible, by combining them with data type
+  definitions, such of enums, unions and structs.
+
+  Defining: typedef enum color_enum { RED, BLUE, GREEN } color_type;
+  Defining: typedef union n_union { int i; float f; } n_type;
+  Defining: typedef struct mobile_struct { char *name; int speed; } mobile_type;
+  Defining: typedef struct { char *name; int speed; } mobile_type;
+
+* Conditional Operators
+
+  Example: char x = ((2 > 1) ? 'y' : 'n');
+
+  Conditional operators are used in expressions to return one of two
+  values, depending if a given condition is true or false.
+
+  In the example, the value 'y' will be returned and assigned to the
+  variable x, because the comparision (2 > 1) is true.  If it was
+  false, then 'n' would have been returned and assigned to x.
+
+* Preprocessor
+
+  : #include
+  : #define
+
+  : #ifdef
+  : #endif
+
+  : #ifndef
+  : #endif
+
+  : #if
+  : #elif
+  : #else
+  : #endif
+
+  : __FILE__
+  : __FUNCTION__
+  : __LINE__
+  : __COUNTER__
+
+* Libraries
+** stdio.h
+
+  A library for input and output functions.
+
+  puts()
+  perror()
+
+  printf()
+  fprintf()
+  sprintf()
+  snprintf()
+
+  Standard I/O FILE streams:
+
+    stdin
+    stdout
+    stderr
+
+** stdlib.h
+
+  A library with many essential functions.
+
+  exit(unsigned char)
+  malloc(N_BYTES)
+
+    Allocates a specified amount of contiguous memory in the heap.
+    When allocation is successful, it returns void pointer to the
+    first address.  When allocation is unsuccessful, it returns a null
+    pointer.
+
+  calloc(N_MEMBERS, N_BYTES)
+
+    Like malloc(), but initializes memory to 0.
+
+  realloc()
+
+  free(POINTER)
+
+    Frees a previously allocated contiguous memory in the heap.  A
+    pointer to the first address must be given.
+
+** stdint.h
+
+  A library of integer types which have constant size between systems.
+
+  Example: int8_t n;
+  Example: int16_t n;
+  Example: int32_t n;
+  Example: int64_t n;
+  Example: uint8_t n;
+  Example: uint16_t n;
+  Example: uint32_t n;
+  Example: uint64_t n;
+
+** stdbool.h
+
+  Defines a "bool" type and the values "true" and "false".
+
+  Example: bool check = true;
+
+** string.h
+
+  basename (path)
+
+    See libgen.h.
+
+  strcpy (destination, source)
+
+    Copies bytes until a source null byte is reached.  The destination
+    is null terminated.  If the source isn't null terminated properly,
+    the destination buffer will be overrun.
+
+  strncpy (destination, source, size)
+
+    Copies bytes and fills with nulls the remaining space, specified
+    by 'size'.  If the source size is bigger than 'size', no null
+    termination will be done.  If the source is less than size,
+    excessive null bytes will be written.
+
+  memcpy (destination, source, size)
+
+    Copies bytes.  Doesn't care about null bytes or termination.
+    Return the destination pointer.
+
+  mempcpy (destination, source, size)
+
+    Like memcpy, but returns a pointer to destination + size.  The
+    returned pointer is convenient when doing consecutive writes.
+
+  memmove (destination, source, size)
+  memset (address, byte, size)
+
+    Sets all bytes to a specified byte.  Returns the address pointer.
+
+  strcmp (address1, address2)
+  strncmp (address1, address2, size)
+  memcmp (address1, address2, size)
+
+  strlen (address)
+  strnlen (address, max)
+
+  String functions.
+
+  int strcmp(STRING_1, STRING_2)
+
+    Compares two strings, character by character.  The comparison is
+    done until two different are characters found.
+
+    The function returns either -1, 0 or 1.
+
+    When different characters are found the function compares which
+    character is greater numerically.  If the character of STRING_1 is
+    greater, then it returns 1.  If it's less, it returns -1.
+
+    When no different characters are found, the function returns 0.
+    This means the strings are exactly the same.
+
+    Example 1: int result = strcmp("Gundam", "Gundam");
+    Example 2: int result = strcmp("gundam", "Gundam Pilot");
+    Example 3: int result = strcmp("Gundam", "Gundam Pilot");
+
+    Example 1 returns 0, because the strings are exactly the same.
+
+    Example 2 returns 1, because 'g' is greater numerically than 'G'.
+
+    Example 3 returns -1, because the second string is longer.  A
+    comparison is made between the characters right after 'm'.  The
+    character of the first string is NULL, while the character of the
+    second is SPACE.  SPACE is greater than NULL numerically.
+
+** errno.h
+
+  Defines an int variable errno.  It's set to a non-zero value by
+  various system calls and functions when an error occurs.
+
+  : errno = 0;
+  : long n = atol("10000000000000000000");
+  : if (errno == ERANGE)
+  :   {
+  :     printf("error: The number is too big\n");
+  :     exit (1);
+  :   }
+
+  It's recommend to always to set errno to 0 before checking, because
+  a previous call might set it to a non-zero value.  Similarly, check
+  or save errno immediately after doing the call you're testing.
+
+** assert.h
+
+  Check whenever statement is true and continue.  If it isn't, the
+  program aborts and a diagnostic message is printed.
+
+  Example: assert(i < 10);
+
+  Assertion functions can be disabled with the NDEBUG macro.
+
+  Example: gcc -DNDEBUG -o sand sand.c
+** libgen.h
+
+  char *dirname (char *path);
+  char *basename (char *path);
+
+  : dirname ("/usr/bin/gcc")  /* returns "/usr/bin" */
+  : dirname ("/usr/bin/gcc/") /* returns "/usr/bin" */
+  : dirname ("usr/bin/gcc")   /* returns "usr/bin" */
+  : dirname ("./gcc")         /* returns "." */
+  : dirname ("gcc")           /* returns "." */
+  : dirname ("/usr")          /* returns "/" */
+
+  : basename ("/usr/bin/gcc")  /* returns "gcc" */
+  : basename ("/usr/bin/gcc/") /* returns "gcc" */
+  : basename ("usr/bin/gcc")   /* returns "gcc" */
+  : basename ("./gcc")         /* returns "gcc" */
+  : basename ("gcc")           /* returns "gcc" */
+  : basename ("/usr/")         /* returns "usr" */
+
+  Both dirname and basename functions many modify the string.  All
+  trailing '/' characters are removed.
+
+  There's GNU version of basename which doesn't modify the string and
+  returns an empty path when there are trailing '/' characters.  It
+  can be accessed like this:
+
+  : #define _GNU_SOURCE
+  : #include <string.h>
+  :
+  : basename ("/usr/bin/gcc")  /* returns "gcc" */
+  : basename ("/usr/bin/gcc/") /* returns "" */
+
+  Including libgen.h will make the GNU versions unavailable.
+
+** x86intrin.h
+
+  Includes intrinsic functions for x86 processors.
+
+  uint64_t __rdtsc (void):
+
+  Time stamp counter.  Returns a processor time stamp.  Useful for
+  processes performance.
